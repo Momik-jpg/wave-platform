@@ -66,6 +66,8 @@ verify_checksum() {
     expected="$(awk -v file="$file_name" '$2 == file || $2 == ("*" file) { print $1; exit }' "$sums_file")"
     [[ "$expected" =~ ^[0-9A-Fa-f]{64}$ ]] || fail "No valid checksum was published for $file_name."
     actual="$(sha256_file "$archive")"
+    expected="$(printf '%s' "$expected" | LC_ALL=C tr '[:upper:]' '[:lower:]')"
+    actual="$(printf '%s' "$actual" | LC_ALL=C tr '[:upper:]' '[:lower:]')"
     [[ "$actual" == "$expected" ]] || fail "Checksum verification failed for $file_name."
     echo "[info] Verified SHA-256: $file_name"
 }
